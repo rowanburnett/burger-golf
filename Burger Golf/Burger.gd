@@ -35,3 +35,8 @@ func _on_Ground_collision():
 	else:
 		set_max_contacts_reported(0)
 		
+
+
+func _on_StateManager_state_changed(new_state):
+	var is_aiming = new_state == StateManager.State.AIMING
+	arrow.visible = is_aiming
