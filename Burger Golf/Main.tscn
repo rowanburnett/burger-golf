@@ -1,0 +1,105 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Burger.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Arrow.tscn" type="PackedScene" id=2]
+[ext_resource path="res://BurgerCamera.gd" type="Script" id=3]
+[ext_resource path="res://Main.gd" type="Script" id=4]
+[ext_resource path="res://OnionRing.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Ground.gd" type="Script" id=6]
+
+[sub_resource type="PhysicsMaterial" id=6]
+friction = 0.5
+
+[sub_resource type="SpatialMaterial" id=8]
+albedo_color = Color( 0.215686, 0.572549, 0.231373, 1 )
+
+[node name="Main" type="Node"]
+script = ExtResource( 4 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="."]
+transform = Transform( 1, 0, 0, 0, 0.415011, 0.909816, 0, -0.909816, 0.415011, 0, 22.7796, 0 )
+
+[node name="Burger" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20.9795, -1.46535, -0.463459 )
+collision_mask = 2
+mass = 0.91
+physics_material_override = SubResource( 6 )
+continuous_cd = true
+can_sleep = false
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+
+[node name="Arrow" parent="Burger" instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.101212, 0.513765, 0 )
+
+[node name="Control" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="PowerLabel" type="Label" parent="Control"]
+anchor_left = 0.25
+anchor_top = 0.175
+anchor_right = 0.25
+anchor_bottom = 0.175
+margin_left = 710.0
+margin_top = 32.0
+margin_right = 765.0
+margin_bottom = 46.0
+text = "Power: 0"
+
+[node name="DirectionLabel" type="Label" parent="Control"]
+margin_left = 719.0
+margin_top = 63.0
+margin_right = 794.0
+margin_bottom = 77.0
+text = "Direction: 0"
+
+[node name="AngleLabel" type="Label" parent="Control"]
+margin_left = 720.0
+margin_top = 87.0
+margin_right = 772.0
+margin_bottom = 101.0
+text = "Angle: 0"
+
+[node name="VelocityLabel" type="Label" parent="Control"]
+margin_left = 720.0
+margin_top = 111.0
+margin_right = 787.0
+margin_bottom = 125.0
+text = "Velocity: 0"
+
+[node name="Ground" type="CSGBox" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.83464, 0 )
+material_override = SubResource( 8 )
+use_collision = true
+collision_layer = 2
+width = 1000.0
+depth = 1000.0
+script = ExtResource( 6 )
+
+[node name="Hole" type="CSGCylinder" parent="Ground"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 6.64761, 2.64348, 0.431646 )
+operation = 2
+radius = 1.91867
+height = 7.31117
+sides = 20
+
+[node name="BurgerCamera" type="Camera" parent="."]
+transform = Transform( -0.999989, -0.00123318, 0.0046023, 0, 0.965926, 0.258819, -0.00476465, 0.258816, -0.965915, 21.1137, 3.28362, -7.38913 )
+current = true
+script = ExtResource( 3 )
+target_path = NodePath("../Burger/Arrow")
+offset = Vector3( 0, 3, -8 )
+
+[node name="Burger2" parent="." instance=ExtResource( 1 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4661, -1.19781, -2.49428 )
+collision_layer = 3
+collision_mask = 3
+script = null
+
+[node name="OnionRing" parent="." instance=ExtResource( 5 )]
+transform = Transform( 0.0021642, -0.999998, 0, 0.999998, 0.0021642, 0, 0, 0, 1, 0, 2.70885, 0 )
+
+[connection signal="body_entered" from="Burger" to="Ground" method="_on_Burger_body_entered"]
+[connection signal="collision" from="Ground" to="Burger" method="_on_Ground_collision"]

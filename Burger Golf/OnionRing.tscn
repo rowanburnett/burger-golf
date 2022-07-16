@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="SpatialMaterial" id=1]
+albedo_color = Color( 0.843137, 0.729412, 0.384314, 1 )
+
+[node name="OnionRing" type="StaticBody"]
+collision_layer = 2
+
+[node name="CSGTorus" type="CSGTorus" parent="."]
+material_override = SubResource( 1 )
+use_collision = true
+collision_layer = 2
+inner_radius = 2.366
+outer_radius = 1.641
+sides = 20
