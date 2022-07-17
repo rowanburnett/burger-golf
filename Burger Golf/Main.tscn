@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Burger.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Arrow.tscn" type="PackedScene" id=2]
@@ -8,9 +8,11 @@
 [ext_resource path="res://Ground.gd" type="Script" id=6]
 [ext_resource path="res://StateManager.gd" type="Script" id=7]
 [ext_resource path="res://PowerBar.gd" type="Script" id=8]
+[ext_resource path="res://CameraRig.gd" type="Script" id=9]
 
 [sub_resource type="PhysicsMaterial" id=6]
-friction = 0.5
+friction = 0.1
+bounce = 0.8
 
 [sub_resource type="SpatialMaterial" id=8]
 albedo_color = Color( 0.215686, 0.572549, 0.231373, 1 )
@@ -21,19 +23,17 @@ script = ExtResource( 4 )
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.415011, 0.909816, 0, -0.909816, 0.415011, 0, 22.7796, 0 )
 
+[node name="Arrow" parent="." instance=ExtResource( 2 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 245.05, -1.17911, -0.463459 )
+
 [node name="Burger" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 20.9795, -1.46535, -0.463459 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 245.05, -1.67911, -0.463459 )
 collision_mask = 2
-mass = 0.91
+mass = 0.01
 physics_material_override = SubResource( 6 )
 continuous_cd = true
 can_sleep = false
-axis_lock_angular_x = true
-axis_lock_angular_y = true
-axis_lock_angular_z = true
-
-[node name="Arrow" parent="Burger" instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.101212, 0.513765, 0 )
+angular_damp = 2.0
 
 [node name="Control" type="Control" parent="."]
 margin_right = 40.0
@@ -105,13 +105,6 @@ radius = 1.91867
 height = 7.31117
 sides = 20
 
-[node name="BurgerCamera" type="Camera" parent="."]
-transform = Transform( -0.999989, -0.00123318, 0.0046023, 0, 0.965926, 0.258819, -0.00476465, 0.258816, -0.965915, 21.1137, 3.28362, -7.38913 )
-current = true
-script = ExtResource( 3 )
-target_path = NodePath("../Burger/Arrow")
-offset = Vector3( 0, 3, -8 )
-
 [node name="Burger2" parent="." instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4661, -1.19781, -2.49428 )
 collision_layer = 3
@@ -129,6 +122,17 @@ depth = 12.1355
 
 [node name="StateManager" type="Node" parent="."]
 script = ExtResource( 7 )
+
+[node name="CameraRig" type="Position3D" parent="."]
+transform = Transform( -0.999989, -0.00123318, 0.0046023, -8.07338e-12, 0.965926, 0.258819, -0.00476465, 0.258816, -0.965915, 21.1137, 3.28362, -7.38913 )
+script = ExtResource( 9 )
+target_path = NodePath("../Arrow")
+
+[node name="BurgerCamera" type="Camera" parent="CameraRig"]
+transform = Transform( -1, 1.51808e-08, -8.60946e-08, 0, 0.984808, 0.173648, 8.74228e-08, 0.173648, -0.984808, 0, 3, -10 )
+current = true
+far = 8192.0
+script = ExtResource( 3 )
 
 [connection signal="body_entered" from="Burger" to="Ground" method="_on_Burger_body_entered"]
 [connection signal="collision" from="Ground" to="Burger" method="_on_Ground_collision"]
