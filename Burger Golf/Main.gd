@@ -6,7 +6,7 @@ enum PowerDirection {
 	DECREASING
 }
 
-var power = 0
+var power = 0.0
 var direction = 0
 var x_force = 0
 var y_force = 0
@@ -19,8 +19,8 @@ onready var stateManager: StateManager = get_node("StateManager")
 onready var burger = get_node("Burger")
 onready var powerLabel = get_node("Control/PowerLabel")
 onready var directionLabel = get_node("Control/DirectionLabel")
-onready var arrow = get_node("Burger/Arrow")
-onready var camera = get_node("BurgerCamera")
+onready var arrow = get_node("Arrow")
+onready var camera = get_node("CameraRig")
 onready var velocityLabel = get_node("Control/VelocityLabel")
 onready var angleLabel = get_node("Control/AngleLabel")
 onready var power_bar = get_node("Control/PowerBar")
@@ -75,12 +75,12 @@ func power(delta):
 		power = 0
 		
 	if power_direction == PowerDirection.INCREASING:
-		power += 1
-		if power == 100:
+		power += 0.05
+		if power >= 3:
 			power_direction = PowerDirection.DECREASING
 	else:
-		power -= 1
-		if power == 0:
+		power -= 0.05
+		if power <= 0:
 			power_direction = PowerDirection.INCREASING
 	power_bar.tell_power(power)
 	
