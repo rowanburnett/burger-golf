@@ -12,33 +12,43 @@ enum State {
 	WATCHING
 }
 
-class Player:
-	var name: String
-	
-	func _init(name:String):
-		self.name = name
-		
-signal state_changed(new_state)
+onready var burger = load("res://Burger.tscn")
+onready var player_node = get_node("../Players")
 
+signal state_changed(new_state)
+signal next_turn(active_player)
+signal loaded()
 
 # List of players in the current game
-var players = [Player.new("Rowan")]
+var players = Global.players
+#var players = [Player.new("Rowan")]
 # index in 'players' of the active player
 var active_player = 0
 # What the active player is currently doing
 var state = State.AIMING setget state_changed
-
+	
+func _ready():
+	# make burger for each player
+	for player in players:
+		var instance = burger.instance()
+		player_node.add_child(instance)
+		
+	for node in player_node.get_children():
+		self.connect("state_changed", node.get_node("RigidBody"), "_on_StateManager_state_changed")
+	emit_signal("loaded")
+	
 func state_changed(new_state):
 	emit_signal("state_changed", new_state)
+	var old_state = state
 	state = new_state
-	
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+	var is_aiming = new_state == State.AIMING
+	if state == State.AIMING and old_state == State.WATCHING:
+		next_turn()
+		
+func next_turn():
+	print("next turn")
+	if active_player < len(players) - 1:
+		active_player += 1
+	else:
+		active_player = 0
+	emit_signal("next_turn", active_player)

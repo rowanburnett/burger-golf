@@ -1,39 +1,25 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://Burger.tscn" type="PackedScene" id=1]
-[ext_resource path="res://Arrow.tscn" type="PackedScene" id=2]
-[ext_resource path="res://BurgerCamera.gd" type="Script" id=3]
-[ext_resource path="res://Main.gd" type="Script" id=4]
 [ext_resource path="res://OnionRing.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Ground.gd" type="Script" id=6]
 [ext_resource path="res://StateManager.gd" type="Script" id=7]
 [ext_resource path="res://PowerBar.gd" type="Script" id=8]
-[ext_resource path="res://CameraRig.gd" type="Script" id=9]
+[ext_resource path="res://States.gd" type="Script" id=10]
 
-[sub_resource type="PhysicsMaterial" id=6]
-friction = 0.1
-bounce = 0.8
+[sub_resource type="BoxShape" id=9]
+extents = Vector3( 500, 1, 500 )
 
-[sub_resource type="SpatialMaterial" id=8]
-albedo_color = Color( 0.215686, 0.572549, 0.231373, 1 )
+[sub_resource type="SpatialMaterial" id=11]
+albedo_color = Color( 0.25098, 0.478431, 0.223529, 1 )
+
+[sub_resource type="CubeMesh" id=10]
+material = SubResource( 11 )
+size = Vector3( 1000, 2, 1000 )
 
 [node name="Main" type="Node"]
-script = ExtResource( 4 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.415011, 0.909816, 0, -0.909816, 0.415011, 0, 22.7796, 0 )
-
-[node name="Arrow" parent="." instance=ExtResource( 2 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 245.05, -1.17911, -0.463459 )
-
-[node name="Burger" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 245.05, -1.67911, -0.463459 )
-collision_mask = 2
-mass = 0.01
-physics_material_override = SubResource( 6 )
-continuous_cd = true
-can_sleep = false
-angular_damp = 2.0
 
 [node name="Control" type="Control" parent="."]
 margin_right = 40.0
@@ -71,9 +57,18 @@ margin_right = 787.0
 margin_bottom = 125.0
 text = "Velocity: 0"
 
+[node name="PlayerLabel" type="Label" parent="Control"]
+margin_left = 719.0
+margin_top = 135.0
+margin_right = 813.0
+margin_bottom = 149.0
+text = "Player:"
+
 [node name="PowerBar" type="Control" parent="Control"]
-margin_right = 40.0
-margin_bottom = 40.0
+margin_left = 1.0
+margin_top = 4.0
+margin_right = 41.0
+margin_bottom = 44.0
 script = ExtResource( 8 )
 
 [node name="Background" type="ColorRect" parent="Control/PowerBar"]
@@ -89,28 +84,6 @@ margin_top = 483.0
 margin_right = 711.0
 margin_bottom = 523.0
 
-[node name="Ground" type="CSGBox" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.83464, 0 )
-material_override = SubResource( 8 )
-use_collision = true
-collision_layer = 2
-width = 1000.0
-depth = 1000.0
-script = ExtResource( 6 )
-
-[node name="Hole" type="CSGCylinder" parent="Ground"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 6.64761, 2.64348, 0.431646 )
-operation = 2
-radius = 1.91867
-height = 7.31117
-sides = 20
-
-[node name="Burger2" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4661, -1.19781, -2.49428 )
-collision_layer = 3
-collision_mask = 3
-script = null
-
 [node name="OnionRing" parent="." instance=ExtResource( 5 )]
 transform = Transform( 0.0021642, -0.999998, 0, 0.999998, 0.0021642, 0, 0, 0, 1, 0, 2.70885, 0 )
 
@@ -123,17 +96,26 @@ depth = 12.1355
 [node name="StateManager" type="Node" parent="."]
 script = ExtResource( 7 )
 
-[node name="CameraRig" type="Position3D" parent="."]
-transform = Transform( -0.999989, -0.00123318, 0.0046023, -8.07338e-12, 0.965926, 0.258819, -0.00476465, 0.258816, -0.965915, 21.1137, 3.28362, -7.38913 )
-script = ExtResource( 9 )
-target_path = NodePath("../Arrow")
+[node name="States" type="Node" parent="StateManager"]
+script = ExtResource( 10 )
 
-[node name="BurgerCamera" type="Camera" parent="CameraRig"]
-transform = Transform( -1, 1.51808e-08, -8.60946e-08, 0, 0.984808, 0.173648, 8.74228e-08, 0.173648, -0.984808, 0, 3, -10 )
-current = true
-far = 8192.0
-script = ExtResource( 3 )
+[node name="Players" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7172, 0.321076, 2.84082 )
 
-[connection signal="body_entered" from="Burger" to="Ground" method="_on_Burger_body_entered"]
-[connection signal="collision" from="Ground" to="Burger" method="_on_Ground_collision"]
-[connection signal="state_changed" from="StateManager" to="Burger" method="_on_StateManager_state_changed"]
+[node name="Ground" type="StaticBody" parent="."]
+script = ExtResource( 6 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Ground"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.507092, 0 )
+shape = SubResource( 9 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Ground"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.699122, -0.754539, 0.564823 )
+layers = 2
+mesh = SubResource( 10 )
+skeleton = NodePath("../../Players")
+material/0 = null
+
+[connection signal="loaded" from="StateManager" to="StateManager/States" method="_on_StateManager_loaded"]
+[connection signal="next_turn" from="StateManager" to="StateManager/States" method="_on_StateManager_next_turn"]
+[connection signal="state_changed" from="StateManager" to="StateManager/States" method="_on_StateManager_state_changed"]
