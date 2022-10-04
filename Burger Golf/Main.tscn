@@ -1,5 +1,6 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=11 format=2]
 
+[ext_resource path="res://Control.gd" type="Script" id=1]
 [ext_resource path="res://OnionRing.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Ground.gd" type="Script" id=6]
 [ext_resource path="res://StateManager.gd" type="Script" id=7]
@@ -16,6 +17,8 @@ albedo_color = Color( 0.25098, 0.478431, 0.223529, 1 )
 material = SubResource( 11 )
 size = Vector3( 1000, 2, 1000 )
 
+[sub_resource type="CylinderMesh" id=12]
+
 [node name="Main" type="Node"]
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
@@ -24,17 +27,7 @@ transform = Transform( 1, 0, 0, 0, 0.415011, 0.909816, 0, -0.909816, 0.415011, 0
 [node name="Control" type="Control" parent="."]
 margin_right = 40.0
 margin_bottom = 40.0
-
-[node name="PowerLabel" type="Label" parent="Control"]
-anchor_left = 0.25
-anchor_top = 0.175
-anchor_right = 0.25
-anchor_bottom = 0.175
-margin_left = 710.0
-margin_top = 32.0
-margin_right = 765.0
-margin_bottom = 46.0
-text = "Power: 0"
+script = ExtResource( 1 )
 
 [node name="DirectionLabel" type="Label" parent="Control"]
 margin_left = 719.0
@@ -87,12 +80,6 @@ margin_bottom = 523.0
 [node name="OnionRing" parent="." instance=ExtResource( 5 )]
 transform = Transform( 0.0021642, -0.999998, 0, 0.999998, 0.0021642, 0, 0, 0, 1, 0, 2.70885, 0 )
 
-[node name="CSGBox" type="CSGBox" parent="."]
-transform = Transform( 0.822717, 0, 0, 0, 8.2741, 0, 0, 0, 1.95672, -22.7278, 8.32178, -15.3249 )
-use_collision = true
-height = 9.802
-depth = 12.1355
-
 [node name="StateManager" type="Node" parent="."]
 script = ExtResource( 7 )
 
@@ -110,12 +97,20 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.507092, 0 )
 shape = SubResource( 9 )
 
 [node name="MeshInstance" type="MeshInstance" parent="Ground"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.699122, -0.754539, 0.564823 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -6.00227, -1.46275, 3.5028 )
 layers = 2
 mesh = SubResource( 10 )
 skeleton = NodePath("../../Players")
 material/0 = null
 
+[node name="Target" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.356383, 0 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Target"]
+mesh = SubResource( 12 )
+material/0 = null
+
 [connection signal="loaded" from="StateManager" to="StateManager/States" method="_on_StateManager_loaded"]
 [connection signal="next_turn" from="StateManager" to="StateManager/States" method="_on_StateManager_next_turn"]
 [connection signal="state_changed" from="StateManager" to="StateManager/States" method="_on_StateManager_state_changed"]
+[connection signal="aim_changed" from="StateManager/States" to="Control" method="_on_States_aim_changed"]

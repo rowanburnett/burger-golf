@@ -31,11 +31,12 @@ func _ready():
 	# make burger for each player
 	for player in players:
 		var instance = burger.instance()
+		instance.set_name(player.name)
 		player_node.add_child(instance)
 		
 	for node in player_node.get_children():
 		self.connect("state_changed", node.get_node("RigidBody"), "_on_StateManager_state_changed")
-	emit_signal("loaded")
+	emit_signal("loaded", active_player)
 	
 func state_changed(new_state):
 	emit_signal("state_changed", new_state)

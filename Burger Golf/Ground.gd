@@ -1,4 +1,4 @@
-extends CSGBox
+extends StaticBody
 
 signal collision
 

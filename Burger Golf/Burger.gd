@@ -1,51 +1,51 @@
-extends RigidBody
+extends Spatial
 
-var angle = Vector3.ZERO
 var direction = Vector3.ZERO
-var x_force = 0
-var y_force = 0
-var forces = [0, 0, 0]
+var max_points = 250
+var x_velocity = 0
+var y_velocity = 0
+var z_velocity = 0
 
-onready var arrow = get_node("../Arrow")
+var aim_changed = false
 
-func _ready():
-	set_contact_monitor(true)
-	
+onready var burger = get_node("RigidBody")
+onready var arrow = get_node("Arrow")
+onready var line = get_node("Line")
+
 func _process(delta):
 	direction = -arrow.get_global_transform().basis.z
-	arrow.global_transform.origin = self.global_transform.origin
+	arrow.global_transform.origin = burger.global_transform.origin
+
+func _on_aim_changed(x_angle, y_angle):
+	var x_force = (x_angle * -50)
+	var y_force = (y_angle * 50)
+	var z_force = (x_angle * -50)
+	x_velocity = (x_force / burger.mass) * direction.x
+	y_velocity = (y_force / burger.mass)
+	z_velocity = (z_force / burger.mass) * direction.z
+	
+	aim_changed = true
+	
+func _physics_process(delta):
+	if aim_changed:
+		update_trajectory(delta)
+		
+func update_trajectory(delta):
+	line.clear()
+	line.begin(1)
+	
+	var pos = burger.translation
+	var vel = Vector3(x_velocity, y_velocity, z_velocity)
+	
+	for i in max_points:
+		line.add_vertex(pos)
+		pos += vel * delta
+		vel.x += x_velocity * delta
+		vel.y -= y_velocity * delta - 9.8 * pow(delta, 2) / 2 
+		vel.z += z_velocity * delta
+		
+	aim_changed = false
+	line.end()
 	
 func launch(x_force, y_force):
-	set_max_contacts_reported(1)
-	
-	apply_impulse(Vector3(0, 0.02, 0), direction * x_force)
-	apply_impulse(Vector3.ZERO, Vector3(0, y_force, 0))
-	
-	forces = [x_force, y_force, direction]
-	return forces
-
-var bounces = 0
-
-func _on_Ground_collision():
-	return
-	print("HELLO I AM COLLIDING")
-	print(forces)
-	if forces[0] < -2  or forces[1] > 2:
-			forces[0] *= 0.8
-			forces[1] *= 0.8
-			print("FORCE")
-			print(forces[1])
-			apply_impulse(Vector3.ZERO, forces[0] * forces[2])
-			apply_impulse(Vector3.ZERO, Vector3(0, forces[1], 0))
-			
-
-
-			
-	else:
-		set_max_contacts_reported(0)
-		
-
-
-func _on_StateManager_state_changed(new_state):
-	var is_aiming = new_state == StateManager.State.AIMING
-	arrow.visible = is_aiming
+	burger.apply_impulse(Vector3(0, 0.02, 0), Vector3(direction.x * x_force, y_force, direction.z * x_force))

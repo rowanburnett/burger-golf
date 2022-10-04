@@ -9,20 +9,19 @@
 radius = 0.55
 
 [node name="Burger" type="Spatial"]
+script = ExtResource( 2 )
 
 [node name="Arrow" parent="." instance=ExtResource( 3 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 245.05, -1.17911, -0.463459 )
-visible = false
 
 [node name="RigidBody" type="RigidBody" parent="."]
 collision_mask = 2
-mass = 0.0102041
 continuous_cd = true
 contacts_reported = 10
 contact_monitor = true
 can_sleep = false
+linear_damp = 0.0
 angular_damp = 2.0
-script = ExtResource( 2 )
 
 [node name="CollisionShape" type="CollisionShape" parent="RigidBody"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.565697, 0 )
@@ -38,3 +37,5 @@ script = ExtResource( 4 )
 transform = Transform( -1, 1.51808e-08, -8.60946e-08, 0, 0.984808, 0.173648, 8.74228e-08, 0.173648, -0.984808, 0, 3, -10 )
 current = true
 far = 8192.0
+
+[node name="Line" type="ImmediateGeometry" parent="."]
