@@ -17,6 +17,8 @@ var power_direction = PowerDirection.INCREASING
 var player = NodePath()
 var arrow = NodePath()
 var loaded = false
+var static_frames = 0
+var is_aiming = true
 
 onready var stateManager: StateManager = get_node("../../StateManager")
 onready var player_node = get_node("../../Players")
@@ -85,8 +87,6 @@ func power(delta):
 				power_direction = PowerDirection.INCREASING
 		power_bar.tell_power(power)
 
-var static_frames = 0
-
 func watching(delta):
 	# TODO idk if this method is robust to stuff like conveyer belts.
 	#   Also we should probably check it stays static a few frames I guess
@@ -95,7 +95,7 @@ func watching(delta):
 	var is_moving = player.get_node("RigidBody").linear_velocity.length() > stationaryTolerance
 	if not is_moving:
 		static_frames += 1
-		if static_frames >= 20:
+		if static_frames >= 60:
 			stateManager.state = StateManager.State.AIMING
 			static_frames = 0
 
@@ -110,9 +110,9 @@ func _on_StateManager_loaded(active_player):
 func _on_StateManager_next_turn(active_player):
 	get_active_player(active_player)
 
-func _on_StateManager_state_changed(new_state):
+func _on_StateManager_state_changed(new_state, active_player):
 	if loaded:
-		var is_aiming = new_state == StateManager.State.AIMING
+		is_aiming = new_state == StateManager.State.AIMING
 		arrow.visible = is_aiming
 
 func get_active_player(active_player):
@@ -120,3 +120,12 @@ func get_active_player(active_player):
 	arrow = player.get_node("Arrow")
 	player.get_node("CameraRig/Camera").current = true
 	player_label.text = "Player: %s" % player.get_name()
+	for node in player_node.get_children():
+		if node == player:
+			stateManager.players[active_player].active = true
+			node.get_node("Arrow").visible = is_aiming
+			node.get_node("Line").visible = true
+		else:
+			stateManager.players[active_player].active = false
+			node.get_node("Arrow").visible = false
+			node.get_node("Line").visible = false

@@ -35,11 +35,11 @@ func _ready():
 		player_node.add_child(instance)
 		
 	for node in player_node.get_children():
-		self.connect("state_changed", node.get_node("RigidBody"), "_on_StateManager_state_changed")
+		self.connect("state_changed", node, "_on_StateManager_state_changed")
 	emit_signal("loaded", active_player)
 	
 func state_changed(new_state):
-	emit_signal("state_changed", new_state)
+	emit_signal("state_changed", new_state, active_player)
 	var old_state = state
 	state = new_state
 	var is_aiming = new_state == State.AIMING

@@ -1,6 +1,5 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=10 format=2]
 
-[ext_resource path="res://Control.gd" type="Script" id=1]
 [ext_resource path="res://OnionRing.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Ground.gd" type="Script" id=6]
 [ext_resource path="res://StateManager.gd" type="Script" id=7]
@@ -27,28 +26,6 @@ transform = Transform( 1, 0, 0, 0, 0.415011, 0.909816, 0, -0.909816, 0.415011, 0
 [node name="Control" type="Control" parent="."]
 margin_right = 40.0
 margin_bottom = 40.0
-script = ExtResource( 1 )
-
-[node name="DirectionLabel" type="Label" parent="Control"]
-margin_left = 719.0
-margin_top = 63.0
-margin_right = 794.0
-margin_bottom = 77.0
-text = "Direction: 0"
-
-[node name="AngleLabel" type="Label" parent="Control"]
-margin_left = 720.0
-margin_top = 87.0
-margin_right = 772.0
-margin_bottom = 101.0
-text = "Angle: 0"
-
-[node name="VelocityLabel" type="Label" parent="Control"]
-margin_left = 720.0
-margin_top = 111.0
-margin_right = 787.0
-margin_bottom = 125.0
-text = "Velocity: 0"
 
 [node name="PlayerLabel" type="Label" parent="Control"]
 margin_left = 719.0
